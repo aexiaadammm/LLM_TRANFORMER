@@ -1,0 +1,22 @@
+# mediul virtual Python (se recreează cu pip install -r requirements.txt)
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# setările PyCharm
+.idea/
+
+# modelele antrenate (se recreează cu train.py și train_clasificator.py)
+*.pt
+
+# datele: eseurile au drepturi de autor, rămân doar pe calculator
+date/*
+!date/ghid_etichetare.md
+!date/exemplu_argumentative.csv
+
+# texte de antrenare și fișiere de test locale
+input.txt
+test_*.txt
+
+
