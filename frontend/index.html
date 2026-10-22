@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html class="dark" lang="ro">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<title>BacHelper</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+<script>
+tailwind.config = { darkMode: "class", theme: { extend: {
+  colors: {
+    "surface": "#141125", "surface-container-lowest": "#0e0b20", "surface-container-low": "#1c192e",
+    "surface-container": "#201d32", "surface-container-high": "#2b273d", "surface-variant": "#363248",
+    "on-surface": "#e6dffc", "on-surface-variant": "#ccc3d8", "outline": "#958da1", "outline-variant": "#4a4455",
+    "primary": "#d2bbff", "on-primary": "#3f008e", "primary-container": "#7c3aed", "on-primary-container": "#ede0ff",
+    "secondary": "#4cd7f6", "secondary-container": "#03b5d3", "tertiary": "#ddb7ff",
+    "error": "#ffb4ab", "warn": "#fbbf24"
+  },
+  fontFamily: { display: ["Space Grotesk"], body: ["Inter"] },
+  borderRadius: { DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", "2xl": "1rem", full: "9999px" }
+}}};
+</script>
+<style>
+  html, body { margin: 0; padding: 0; }
+  body { min-height: 100dvh; background: #141125; color: #e6dffc; font-family: Inter, sans-serif; }
+  .font-display { font-family: "Space Grotesk", sans-serif; }
+  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400; vertical-align: middle; }
+  .glass { background: rgba(32, 29, 50, 0.72); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+           border: 1px solid rgba(168, 85, 247, 0.18); }
+  .inset { background: rgba(10, 7, 27, 0.80); border: 1px solid rgba(168, 85, 247, 0.20); }
+  .inset:focus-within { border-color: #06B6D4; box-shadow: 0 0 16px rgba(6, 182, 212, 0.25); }
+  .btn-primary { background: linear-gradient(90deg, #7c3aed, #03b5d3); color: #fff;
+                 box-shadow: 0 0 24px -4px rgba(124, 58, 237, .6), 0 0 12px rgba(76, 215, 246, .3); }
+  .btn-primary:hover { filter: brightness(1.1); }
+  .btn-primary:disabled { opacity: .6; cursor: wait; }
+  textarea { line-height: 1.65; }
+  textarea::placeholder { color: #64748B; }
+  .view { display: none; }
+  .view.activ { display: block; }
+  .nav-btn.activ { color: #fff; background: rgba(124, 58, 237, .22); box-shadow: 0 0 16px rgba(6, 182, 212, .35); }
+  input[type=range] { accent-color: #4cd7f6; }
+  @media (prefers-reduced-motion: reduce) { .animate-spin, .animate-pulse { animation: none !important; } }
+
+  /* mod luminos (Supernova), din design-ul Stitch */
+  html:not(.dark) body { background: #f7f5ff; color: #1e1b4b; }
+  html:not(.dark) .glass { background: rgba(237, 233, 254, .85); border-color: rgba(196, 181, 253, .6); }
+  html:not(.dark) .inset { background: #ffffff; border-color: rgba(196, 181, 253, .8); }
+  html:not(.dark) .text-on-surface { color: #1e1b4b !important; }
+  html:not(.dark) .text-on-surface-variant { color: #5b21b6 !important; }
+  html:not(.dark) .text-outline { color: #7c3aed !important; }
+  html:not(.dark) textarea, html:not(.dark) #gen-rezultat { color: #1e1b4b !important; }
+  html:not(.dark) header, html:not(.dark) nav { background: rgba(247, 245, 255, .9) !important; }
+  html:not(.dark) .nav-btn.activ { color: #4c1d95; }
+  html:not(.dark) .text-secondary { color: #0e7490 !important; }
+  html:not(.dark) header, html:not(.dark) nav { box-shadow: 0 2px 12px rgba(124, 58, 237, .12) !important; }
+</style>
+</head>
+
+<body class="relative">
+<canvas id="stele" class="fixed inset-0 w-full h-full pointer-events-none z-0"></canvas>
+
+<!-- ====================== ANTET ====================== -->
+<header class="fixed top-0 inset-x-0 z-50 bg-surface/75 backdrop-blur-xl shadow-[0_4px_24px_rgba(10,7,27,0.6)]">
+  <div class="max-w-6xl mx-auto h-16 px-4 flex items-center justify-between">
+    <div class="flex items-center gap-3 min-w-0">
+      <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-primary-container to-secondary-container flex items-center justify-center shrink-0 shadow-[0_0_12px_rgba(124,58,237,.5)]">
+        <span class="material-symbols-outlined text-white text-[20px]">auto_stories</span>
+      </div>
+      <div class="flex flex-col min-w-0">
+        <span class="font-display text-[11px] uppercase tracking-widest text-secondary leading-none">BacHelper</span>
+        <h1 id="titlu-pagina" class="font-display text-lg font-semibold text-on-surface truncate leading-tight">Verifică eseul</h1>
+      </div>
+    </div>
+    <button id="tema" class="flex items-center gap-2 h-9 px-3 rounded-full border border-primary/30 text-secondary font-display text-xs uppercase tracking-wider hover:bg-primary-container/20"
+            aria-label="Schimbă tema (întunecat / luminos)">
+      <span id="tema-icon" class="material-symbols-outlined text-[18px]">dark_mode</span>
+      <span id="tema-text">Cosmic</span>
+    </button>
+  </div>
+</header>
+
+<main class="relative z-10 max-w-6xl mx-auto px-4 pt-20 pb-28">
+
+<!-- ====================== VERIFICĂ ESEUL ====================== -->
+<section id="view-eseu" class="view activ">
+  <div class="banner relative overflow-hidden rounded-2xl mb-5 p-5 bg-gradient-to-br from-[#2a1460] via-[#1c192e] to-[#05323d]">
+    <div class="absolute -right-10 -top-10 w-48 h-48 rounded-full bg-primary-container/30 blur-3xl"></div>
+    <div class="absolute right-24 bottom-0 w-32 h-32 rounded-full bg-secondary-container/20 blur-3xl"></div>
+    <div class="relative inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container-lowest/80 mb-6">
+      <span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+      <span class="font-display text-[11px] uppercase tracking-wider text-secondary">Barem oficial · Subiectul al III-lea</span>
+    </div>
+    <p class="relative font-display text-xl sm:text-2xl font-semibold text-white leading-snug max-w-xl">Verifică-ți eseul după barem, în loc să tocești comentarii.</p>
+  </div>
+
+  <div class="grid lg:grid-cols-2 gap-5 items-start">
+    <div class="glass rounded-2xl p-4 flex flex-col gap-3">
+      <div class="flex items-start justify-between gap-3">
+        <div>
+          <label for="eseu-text" class="font-display text-sm font-medium text-on-surface flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-[18px] text-primary">edit_note</span>Eseul tău</label>
+          <p class="text-xs text-on-surface-variant mt-0.5">Eseul despre particularitățile unui text, cu fiecare paragraf pe un rând nou.</p>
+        </div>
+        <button data-lipeste="eseu-text" class="shrink-0 flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface-container-high text-secondary font-display text-xs hover:bg-surface-variant">
+          <span class="material-symbols-outlined text-[16px]">content_paste</span>Lipește</button>
+      </div>
+      <div class="inset rounded-lg overflow-hidden">
+        <textarea id="eseu-text" rows="12" class="w-full bg-transparent border-0 p-3 text-sm text-on-surface focus:ring-0 resize-y"
+          placeholder="Primul paragraf: opera, autorul, încadrarea...&#10;&#10;Al doilea paragraf: o trăsătură care încadrează opera...&#10;&#10;..."></textarea>
+        <div class="flex items-center justify-between px-3 py-1.5 bg-surface-container-low/90 text-[11px] font-display text-on-surface-variant">
+          <span class="flex items-center gap-3">
+            <span><span class="material-symbols-outlined text-[14px] text-secondary">format_align_left</span> <span data-paragrafe="eseu-text">0 paragrafe</span></span>
+            <span><span class="material-symbols-outlined text-[14px] text-primary">segment</span> <span data-cuvinte="eseu-text" class="text-secondary">0 cuvinte</span></span>
+          </span>
+          <span class="text-outline">salvat în browser</span>
+        </div>
+      </div>
+      <button id="btn-eseu" class="btn-primary w-full py-3 rounded-xl font-display text-base font-semibold flex items-center justify-center gap-2">
+        <span class="material-symbols-outlined text-[20px] animate-spin" style="animation-duration:4s">orbit</span>Verifică eseul</button>
+      <p id="eroare-eseu" class="hidden text-sm text-error"></p>
+    </div>
+
+    <div id="rezultat-eseu" class="flex flex-col gap-4">
+      <div class="glass rounded-2xl p-5 text-sm text-on-surface-variant flex items-start gap-3">
+        <span class="material-symbols-outlined text-secondary">tips_and_updates</span>
+        <span>Lipește eseul și apasă <b class="text-on-surface">Verifică</b>. Aici vei vedea ce cerințe din barem îndeplinește și ce îi lipsește.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================== TEXT ARGUMENTATIV ====================== -->
+<section id="view-arg" class="view">
+  <div class="banner relative overflow-hidden rounded-2xl mb-5 p-5 bg-gradient-to-br from-[#05323d] via-[#1c192e] to-[#2a1460]">
+    <div class="absolute -right-10 -top-10 w-48 h-48 rounded-full bg-secondary-container/25 blur-3xl"></div>
+    <div class="relative inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container-lowest/80 mb-6">
+      <span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+      <span class="font-display text-[11px] uppercase tracking-wider text-secondary">Barem oficial · Subiectul I B</span>
+    </div>
+    <p class="relative font-display text-xl sm:text-2xl font-semibold text-white leading-snug max-w-xl">Opinie, două argumente, concluzie și legătura cu textul suport.</p>
+  </div>
+
+  <div class="grid lg:grid-cols-2 gap-5 items-start">
+    <div class="glass rounded-2xl p-4 flex flex-col gap-3">
+      <div class="flex items-start justify-between gap-3">
+        <div>
+          <label for="arg-fragment" class="font-display text-sm font-medium text-on-surface flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-[18px] text-secondary">article</span>Textul suport <span class="text-outline font-normal">(opțional)</span></label>
+          <p class="text-xs text-on-surface-variant mt-0.5">Fragmentul de la Subiectul I, copiat din varianta de examen.</p>
+        </div>
+        <button data-lipeste="arg-fragment" class="shrink-0 flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface-container-high text-secondary font-display text-xs hover:bg-surface-variant">
+          <span class="material-symbols-outlined text-[16px]">content_paste</span>Lipește</button>
+      </div>
+      <div class="inset rounded-lg overflow-hidden">
+        <textarea id="arg-fragment" rows="5" class="w-full bg-transparent border-0 p-3 text-sm text-on-surface focus:ring-0 resize-y" placeholder="Lipește aici textul suport..."></textarea>
+      </div>
+
+      <div class="flex items-start justify-between gap-3 mt-1">
+        <div>
+          <label for="arg-text" class="font-display text-sm font-medium text-on-surface flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-[18px] text-primary">balance</span>Textul tău argumentativ</label>
+          <p class="text-xs text-on-surface-variant mt-0.5">Cu fiecare paragraf pe un rând nou.</p>
+        </div>
+        <button data-lipeste="arg-text" class="shrink-0 flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface-container-high text-secondary font-display text-xs hover:bg-surface-variant">
+          <span class="material-symbols-outlined text-[16px]">content_paste</span>Lipește</button>
+      </div>
+      <div class="inset rounded-lg overflow-hidden">
+        <textarea id="arg-text" rows="9" class="w-full bg-transparent border-0 p-3 text-sm text-on-surface focus:ring-0 resize-y"
+          placeholder="Consider că...&#10;&#10;În primul rând, ...&#10;&#10;În al doilea rând, ...&#10;&#10;În concluzie, ..."></textarea>
+        <div class="flex items-center justify-between px-3 py-1.5 bg-surface-container-low/90 text-[11px] font-display text-on-surface-variant">
+          <span class="flex items-center gap-3">
+            <span><span class="material-symbols-outlined text-[14px] text-secondary">format_align_left</span> <span data-paragrafe="arg-text">0 paragrafe</span></span>
+            <span><span class="material-symbols-outlined text-[14px] text-primary">segment</span> <span data-cuvinte="arg-text" class="text-secondary">0 cuvinte</span></span>
+          </span>
+          <span class="text-outline">salvat în browser</span>
+        </div>
+      </div>
+      <button id="btn-arg" class="btn-primary w-full py-3 rounded-xl font-display text-base font-semibold flex items-center justify-center gap-2">
+        <span class="material-symbols-outlined text-[20px] animate-spin" style="animation-duration:4s">orbit</span>Verifică textul</button>
+      <p id="eroare-arg" class="hidden text-sm text-error"></p>
+    </div>
+
+    <div id="rezultat-arg" class="flex flex-col gap-4">
+      <div class="glass rounded-2xl p-5 text-sm text-on-surface-variant flex items-start gap-3">
+        <span class="material-symbols-outlined text-secondary">tips_and_updates</span>
+        <span>Dacă lipești și textul suport, aplicația verifică și dacă argumentele tale îl folosesc. Baremul dă 3 puncte pentru asta.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================== GENEREAZĂ ====================== -->
+<section id="view-gen" class="view">
+  <div class="banner relative overflow-hidden rounded-2xl mb-5 p-5 bg-gradient-to-br from-[#3b0f5c] via-[#1c192e] to-[#2a1460]">
+    <div class="absolute -right-10 -top-10 w-48 h-48 rounded-full bg-tertiary/20 blur-3xl"></div>
+    <div class="relative inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container-lowest/80 mb-6">
+      <span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span>
+      <span class="font-display text-[11px] uppercase tracking-wider text-tertiary">GPT antrenat de la zero</span>
+    </div>
+    <p class="relative font-display text-xl sm:text-2xl font-semibold text-white leading-snug max-w-xl">Modelul tău continuă un text, caracter cu caracter.</p>
+  </div>
+
+  <div class="grid lg:grid-cols-2 gap-5 items-start">
+    <div class="glass rounded-2xl p-4 flex flex-col gap-4">
+      <div>
+        <label for="gen-start" class="font-display text-sm font-medium text-on-surface flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-[18px] text-primary">edit</span>Început de text</label>
+        <div class="inset rounded-lg overflow-hidden mt-2">
+          <textarea id="gen-start" rows="3" class="w-full bg-transparent border-0 p-3 text-sm text-on-surface focus:ring-0 resize-y" placeholder="ROMEO:"></textarea>
+        </div>
+      </div>
+      <div>
+        <div class="flex justify-between text-sm"><label for="gen-lungime" class="text-on-surface-variant">Câte caractere</label><span id="gen-lungime-v" class="font-display text-secondary">300</span></div>
+        <input id="gen-lungime" type="range" min="50" max="1000" step="10" value="300" class="w-full"/>
+      </div>
+      <div>
+        <div class="flex justify-between text-sm"><label for="gen-temp" class="text-on-surface-variant">Creativitate (temperature)</label><span id="gen-temp-v" class="font-display text-secondary">0.8</span></div>
+        <input id="gen-temp" type="range" min="0.1" max="2" step="0.1" value="0.8" class="w-full"/>
+        <p class="text-[11px] text-outline">mic = sigur și repetitiv · mare = creativ, dar mai multe greșeli</p>
+      </div>
+      <div>
+        <div class="flex justify-between text-sm"><label for="gen-topk" class="text-on-surface-variant">top-k <span class="text-outline">(0 = toate caracterele)</span></label><span id="gen-topk-v" class="font-display text-secondary">0</span></div>
+        <input id="gen-topk" type="range" min="0" max="65" step="1" value="0" class="w-full"/>
+      </div>
+      <button id="btn-gen" class="btn-primary w-full py-3 rounded-xl font-display text-base font-semibold flex items-center justify-center gap-2">
+        <span class="material-symbols-outlined text-[20px]">auto_awesome</span>Generează</button>
+      <p id="eroare-gen" class="hidden text-sm text-error"></p>
+    </div>
+    <div class="glass rounded-2xl p-4 flex flex-col gap-2">
+      <span class="font-display text-sm font-medium text-on-surface flex items-center gap-1.5">
+        <span class="material-symbols-outlined text-[18px] text-secondary">notes</span>Text generat</span>
+      <pre id="gen-rezultat" class="inset rounded-lg p-3 text-sm text-on-surface whitespace-pre-wrap font-body min-h-[18rem]"></pre>
+      <p id="gen-nota" class="text-xs text-outline"></p>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- ====================== NAVIGARE ====================== -->
+<nav class="fixed bottom-0 inset-x-0 z-50 bg-surface/85 backdrop-blur-xl shadow-[0_-4px_24px_rgba(14,9,39,0.8)]">
+  <div class="max-w-md mx-auto flex items-center justify-around h-20 px-1">
+    <button data-view="eseu" class="nav-btn activ flex flex-col items-center justify-center gap-1 w-24 h-14 rounded-xl text-on-surface-variant hover:text-on-surface">
+      <span class="material-symbols-outlined text-[22px]">rate_review</span><span class="font-display text-[11px] tracking-wide">Eseu</span></button>
+    <button data-view="arg" class="nav-btn flex flex-col items-center justify-center gap-1 w-24 h-14 rounded-xl text-on-surface-variant hover:text-on-surface">
+      <span class="material-symbols-outlined text-[22px]">balance</span><span class="font-display text-[11px] tracking-wide">Argumentativ</span></button>
+    <button data-view="gen" class="nav-btn flex flex-col items-center justify-center gap-1 w-24 h-14 rounded-xl text-on-surface-variant hover:text-on-surface">
+      <span class="material-symbols-outlined text-[22px]">auto_awesome</span><span class="font-display text-[11px] tracking-wide">Generează</span></button>
+  </div>
+</nav>
+
+<script>
+(function () {
+  const $ = id => document.getElementById(id);
+  const TITLURI = { eseu: 'Verifică eseul', arg: 'Text argumentativ', gen: 'Generează text' };
+
+  // ---------- utilitare ----------
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
+  const bold = s => esc(s).replace(/\*\*(.+?)\*\*/g, '<b class="text-on-surface">$1</b>');
+  function stocheaza(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  function citeste(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+
+  // ---------- navigare între cele trei ecrane ----------
+  function arata(view) {
+    document.querySelectorAll('.view').forEach(v => v.classList.toggle('activ', v.id === 'view-' + view));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('activ', b.dataset.view === view));
+    $('titlu-pagina').textContent = TITLURI[view];
+    stocheaza('bac-view', view);
+    window.scrollTo({ top: 0 });
+  }
+  document.querySelectorAll('.nav-btn').forEach(b => b.addEventListener('click', () => arata(b.dataset.view)));
+  if (TITLURI[citeste('bac-view')]) arata(citeste('bac-view'));
+
+  // ---------- numărare cuvinte / paragrafe + salvare în browser ----------
+  function numara(id) {
+    const t = $(id).value.trim();
+    const cuv = t ? t.split(/\s+/).length : 0;
+    const par = t ? t.split(/\n+/).filter(p => p.trim().split(/\s+/).length >= 3).length : 0;
+    document.querySelectorAll(`[data-cuvinte="${id}"]`).forEach(e => e.textContent = cuv + ' cuvinte');
+    document.querySelectorAll(`[data-paragrafe="${id}"]`).forEach(e => e.textContent = par + (par === 1 ? ' paragraf' : ' paragrafe'));
+  }
+  ['eseu-text', 'arg-text', 'arg-fragment', 'gen-start'].forEach(id => {
+    const salvat = citeste('bac-' + id);
+    if (salvat) $(id).value = salvat;
+    $(id).addEventListener('input', () => { stocheaza('bac-' + id, $(id).value); numara(id); });
+    numara(id);
+  });
+
+  // butoanele „Lipește”
+  document.querySelectorAll('[data-lipeste]').forEach(b => b.addEventListener('click', async () => {
+    const t = $(b.dataset.lipeste);
+    try {
+      const clip = await navigator.clipboard.readText();
+      if (clip) { t.value = clip; t.dispatchEvent(new Event('input')); }
+    } catch (e) { t.focus(); }
+  }));
+
+  // ---------- desenarea rezultatelor ----------
+  const STARE = {
+    ok:      { icon: 'check_circle', cul: 'text-secondary', fond: 'bg-secondary/10',   bord: 'border-secondary/40', titlu: 'În regulă' },
+    atentie: { icon: 'error',        cul: 'text-warn',      fond: 'bg-amber-400/10',   bord: 'border-amber-400/40', titlu: 'De verificat' },
+    lipsa:   { icon: 'cancel',       cul: 'text-error',     fond: 'bg-red-400/10',     bord: 'border-red-400/40',   titlu: 'Lipsește' },
+  };
+  const CULOARE_ETICHETA = {
+    introducere: 'bg-slate-400/20 text-slate-200', incadrare: 'bg-secondary/20 text-secondary',
+    tema: 'bg-primary-container/40 text-primary', secventa: 'bg-fuchsia-500/20 text-fuchsia-300',
+    element_structura: 'bg-sky-500/20 text-sky-300', concluzie: 'bg-emerald-500/20 text-emerald-300',
+    opinie: 'bg-primary-container/40 text-primary', argument: 'bg-secondary/20 text-secondary',
+    altele: 'bg-slate-500/20 text-slate-300',
+  };
+
+  function deseneaza(container, a) {
+    const proc = Math.round(100 * a.indeplinite / Math.max(a.total, 1));
+    const nr = s => a.cerinte.filter(c => c.stare === s).length;
+    let h = `
+      <div class="glass rounded-2xl p-4 flex flex-col gap-3">
+        <div class="flex items-center justify-between gap-3">
+          <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-lg bg-secondary/15 flex items-center justify-center text-secondary"><span class="material-symbols-outlined text-[20px]">analytics</span></div>
+            <div><h2 class="font-display text-base font-semibold text-on-surface">Cerințe din barem</h2>
+                 <p class="text-xs text-on-surface-variant">${a.cuvinte} de cuvinte · ${a.paragrafe.length} paragrafe</p></div>
+          </div>
+          <div class="font-display text-3xl font-bold text-secondary">${a.indeplinite}<span class="text-base text-on-surface-variant font-semibold">/${a.total}</span></div>
+        </div>
+        <div class="w-full h-3 rounded-full bg-surface-container-lowest overflow-hidden p-0.5">
+          <div class="h-full rounded-full bg-gradient-to-r from-primary-container via-secondary-container to-secondary shadow-[0_0_12px_rgba(76,215,246,.8)]" style="width:${proc}%"></div>
+        </div>
+        <div class="grid grid-cols-3 gap-2 text-center font-display text-xs">
+          <div class="rounded-lg bg-secondary/10 py-1.5 text-secondary">${nr('ok')} în regulă</div>
+          <div class="rounded-lg bg-amber-400/10 py-1.5 text-warn">${nr('atentie')} de verificat</div>
+          <div class="rounded-lg bg-red-400/10 py-1.5 text-error">${nr('lipsa')} lipsesc</div>
+        </div>
+      </div>
+      <div class="flex flex-col gap-2">`;
+    // întâi ce lipsește, apoi ce e de verificat, apoi ce e în regulă
+    ['lipsa', 'atentie', 'ok'].forEach(s => a.cerinte.filter(c => c.stare === s).forEach(c => {
+      const st = STARE[s];
+      h += `<div class="flex items-start gap-3 p-3 rounded-xl border ${st.bord} ${st.fond}">
+              <span class="material-symbols-outlined ${st.cul} text-[20px] mt-0.5">${st.icon}</span>
+              <div class="min-w-0"><span class="font-display text-sm font-semibold text-on-surface">${esc(c.nume)}</span>
+                <span class="font-display text-[10px] uppercase tracking-wider ml-1 ${st.cul}">${st.titlu}</span>
+                <p class="text-sm text-on-surface-variant">${bold(c.mesaj)}</p></div>
+            </div>`;
+    }));
+    h += `</div>
+      <div class="flex items-center justify-between mt-1">
+        <h3 class="font-display text-base font-semibold text-on-surface flex items-center gap-1.5"><span class="material-symbols-outlined text-[20px] text-primary">fact_check</span>Fiecare paragraf</h3>
+        <span class="font-display text-[11px] px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant">${a.paragrafe.length} detectate</span>
+      </div>
+      <div class="flex flex-col gap-2.5">`;
+    a.paragrafe.forEach(p => {
+      h += `<div class="glass rounded-xl p-3 flex flex-col gap-2">
+              <div class="flex items-center justify-between gap-2">
+                <span class="w-7 h-6 rounded-md bg-surface-container-high text-secondary font-display text-xs font-bold flex items-center justify-center">#${p.nr}</span>
+                <span class="px-2 py-0.5 rounded-full font-display text-[11px] font-semibold ${CULOARE_ETICHETA[p.eticheta] || ''}">${esc(p.nume)}</span>
+              </div>
+              <p class="text-xs text-on-surface-variant bg-surface-container-lowest/60 p-2.5 rounded-lg line-clamp-3">${esc(p.text)}</p>
+              <span class="text-[11px] text-outline text-right">${p.cuvinte} cuvinte</span>
+            </div>`;
+    });
+    h += `</div>
+      <div class="p-3.5 rounded-xl bg-surface-container-low/80 flex items-start gap-3">
+        <span class="material-symbols-outlined text-secondary text-[20px]">info</span>
+        <p class="text-xs text-on-surface-variant leading-relaxed">${esc(a.metoda)} Aplicația verifică structura și cerințele din barem, nu calitatea argumentării sau ortografia. Folosește rezultatul ca ajutor, nu ca notă.</p>
+      </div>`;
+    container.innerHTML = h;
+  }
+
+  // ---------- trimiterea către server ----------
+  async function trimite(url, date, buton, eroare) {
+    eroare.classList.add('hidden');
+    buton.disabled = true;
+    try {
+      const r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(date) });
+      const j = await r.json();
+      if (j.eroare) { eroare.textContent = j.eroare; eroare.classList.remove('hidden'); return null; }
+      return j;
+    } catch (e) {
+      eroare.textContent = 'Nu pot ajunge la server. Pornește-l cu: python server.py';
+      eroare.classList.remove('hidden');
+      return null;
+    } finally { buton.disabled = false; }
+  }
+
+  $('btn-eseu').addEventListener('click', async () => {
+    const a = await trimite('/api/eseu', { text: $('eseu-text').value }, $('btn-eseu'), $('eroare-eseu'));
+    if (a) { deseneaza($('rezultat-eseu'), a); if (window.innerWidth < 1024) $('rezultat-eseu').scrollIntoView({ behavior: 'smooth' }); }
+  });
+  $('btn-arg').addEventListener('click', async () => {
+    const a = await trimite('/api/argumentativ', { text: $('arg-text').value, fragment: $('arg-fragment').value }, $('btn-arg'), $('eroare-arg'));
+    if (a) { deseneaza($('rezultat-arg'), a); if (window.innerWidth < 1024) $('rezultat-arg').scrollIntoView({ behavior: 'smooth' }); }
+  });
+
+  [['gen-lungime', 'gen-lungime-v'], ['gen-temp', 'gen-temp-v'], ['gen-topk', 'gen-topk-v']].forEach(([i, v]) => {
+    $(i).addEventListener('input', () => $(v).textContent = $(i).value);
+  });
+  $('btn-gen').addEventListener('click', async () => {
+    const r = await trimite('/api/genereaza', {
+      start: $('gen-start').value, lungime: +$('gen-lungime').value,
+      temperatura: +$('gen-temp').value, top_k: +$('gen-topk').value,
+    }, $('btn-gen'), $('eroare-gen'));
+    if (r) {
+      $('gen-rezultat').textContent = r.text;
+      $('gen-nota').textContent = r.ignorate.length ? 'Caractere ignorate (nu apar în textul de antrenare): ' + r.ignorate.join(' ') : '';
+    }
+  });
+  fetch('/api/stare').then(r => r.json()).then(s => {
+    if (!s.generator) $('gen-nota').textContent = 'Nu există model.pt: rulează întâi python train.py.';
+  }).catch(() => {});
+
+  // ---------- tema întunecată / luminoasă ----------
+  function seteazaTema(dark) {
+    document.documentElement.classList.toggle('dark', dark);
+    $('tema-icon').textContent = dark ? 'dark_mode' : 'wb_sunny';
+    $('tema-text').textContent = dark ? 'Cosmic' : 'Solar';
+    stocheaza('bac-tema', dark ? 'dark' : 'light');
+  }
+  $('tema').addEventListener('click', () => seteazaTema(!document.documentElement.classList.contains('dark')));
+  if (citeste('bac-tema') === 'light') seteazaTema(false);
+
+  // ---------- cerul cu stele (din design-ul Stitch) ----------
+  const canvas = $('stele'), ctx = canvas.getContext('2d');
+  const linistit = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let W = 0, H = 0, stele = [];
+  function redimensioneaza() {
+    W = canvas.width = innerWidth; H = canvas.height = innerHeight;
+    stele = Array.from({ length: 65 }, () => ({
+      x: Math.random() * W, y: Math.random() * H, r: Math.random() * 1.8 + 0.6,
+      v: Math.random() * 0.25 + 0.05, t: Math.random() * 0.03 + 0.01, a: Math.random(), up: Math.random() > .5,
+      tip: Math.random() > .65 ? 'cyan' : (Math.random() > .5 ? 'mov' : 'alb'),
+    }));
+  }
+  function deseneazaStele() {
+    ctx.clearRect(0, 0, W, H);
+    const dark = document.documentElement.classList.contains('dark');
+    for (const s of stele) {
+      if (!linistit) {
+        s.a += s.up ? s.t : -s.t;
+        if (s.a >= 1) { s.a = 1; s.up = false; } else if (s.a <= .15) { s.a = .15; s.up = true; }
+        s.y -= s.v; if (s.y < 0) { s.y = H; s.x = Math.random() * W; }
+      }
+      const c = dark
+        ? (s.tip === 'cyan' ? `rgba(76,215,246,${s.a * .8})` : s.tip === 'mov' ? `rgba(210,187,255,${s.a * .9})` : `rgba(255,255,255,${s.a * .85})`)
+        : (s.tip === 'cyan' ? `rgba(14,165,233,${s.a * .45})` : s.tip === 'mov' ? `rgba(139,92,246,${s.a * .6})` : `rgba(217,119,6,${s.a * .55})`);
+      ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2); ctx.fillStyle = c; ctx.fill();
+    }
+    if (!linistit) requestAnimationFrame(deseneazaStele);
+  }
+  addEventListener('resize', () => { redimensioneaza(); if (linistit) deseneazaStele(); });
+  redimensioneaza(); deseneazaStele();
+})();
+</script>
+</body>
+</html>

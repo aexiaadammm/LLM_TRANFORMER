@@ -63,72 +63,100 @@ def eticheteaza(paragrafe):
     return [_etichete[i] for i in logits.argmax(-1).tolist()]
 
 
-def verifica(eseu):
-    """întoarce (tabel cu eticheta fiecărui paragraf, raport cu ce e în regulă și ce lipsește)"""
+def analizeaza(eseu):
+    """analiza eseului ca date: eticheta fiecărui paragraf și starea fiecărei cerințe din barem.
+    Folosită și de interfața Gradio (verifica), și de server.py (frontend-ul web)."""
     paragrafe = imparte_in_paragrafe(eseu or '')
     if not paragrafe:
-        return [], 'Lipește un eseu, cu paragrafele despărțite prin rânduri noi.'
+        return None
 
     etichete = eticheteaza(paragrafe)
-    tabel = [[i + 1, NUME[e], p[:120] + ('…' if len(p) > 120 else '')]
-             for i, (e, p) in enumerate(zip(etichete, paragrafe))]
     n = {e: etichete.count(e) for e in NUME}
     cuvinte = sum(len(p.split()) for p in paragrafe)
+    cerinte = []   # fiecare: nume, stare ('ok' / 'atentie' / 'lipsa'), mesaj
 
-    ok, lipsa, atentie = [], [], []
+    def cerinta(nume, stare, mesaj):
+        cerinte.append({'nume': nume, 'stare': stare, 'mesaj': mesaj})
 
     # redactare: lungime și părți componente
     if cuvinte >= 400:
-        ok.append(f'Lungimea: {cuvinte} de cuvinte (minimum 400).')
+        cerinta('Lungime', 'ok', f'{cuvinte} de cuvinte (minimum 400).')
     else:
-        lipsa.append(f'Eseul are doar {cuvinte} de cuvinte; baremul cere minimum 400.')
-    for parte in ('introducere', 'concluzie'):
-        (ok if n[parte] else lipsa).append(
-            f'{NUME[parte]}: ' + ('există.' if n[parte] else 'lipsește (contează la redactare, „părțile componente”).'))
-    if n['concluzie'] and etichete[-1] != 'concluzie':
-        atentie.append('Concluzia nu pare să fie ultimul paragraf.')
+        cerinta('Lungime', 'lipsa', f'Eseul are doar {cuvinte} de cuvinte; baremul cere minimum 400.')
+    cerinta('Introducere', 'ok' if n['introducere'] else 'lipsa',
+            'Există.' if n['introducere'] else 'Lipsește (contează la redactare, „părțile componente”).')
 
     # cerința 1: două trăsături de încadrare (6 puncte)
     if n['incadrare'] >= 2:
-        ok.append(f'Încadrarea: {n["incadrare"]} paragrafe cu trăsături (baremul cere două trăsături).')
+        cerinta('Încadrare', 'ok', f'{n["incadrare"]} paragrafe cu trăsături (baremul cere două trăsături).')
     elif n['incadrare'] == 1:
-        atentie.append('Încadrarea: un singur paragraf cu trăsături. Baremul cere **două trăsături**; '
-                       'verifică dacă le ai pe amândouă, ilustrate cu exemple din text.')
+        cerinta('Încadrare', 'atentie', 'Un singur paragraf cu trăsături. Baremul cere **două trăsături**; '
+                'verifică dacă le ai pe amândouă, ilustrate cu exemple din text.')
     else:
-        lipsa.append('Încadrarea: n-am găsit nicio trăsătură care să încadreze opera într-un curent, '
-                     'o perioadă sau o specie (cerința 1, 6 puncte).')
+        cerinta('Încadrare', 'lipsa', 'N-am găsit nicio trăsătură care să încadreze opera într-un curent, '
+                'o perioadă sau o specie (cerința 1, 6 puncte).')
 
     # cerința 2: tema + două secvențe (6 puncte)
-    (ok if n['tema'] else lipsa).append(
-        'Tema: ' + ('există.' if n['tema'] else 'n-am găsit un paragraf despre temă (cerința 2).'))
+    cerinta('Tema', 'ok' if n['tema'] else 'lipsa',
+            'Există.' if n['tema'] else 'N-am găsit un paragraf despre temă (cerința 2).')
     if n['secventa'] >= 2:
-        ok.append(f'Secvențe: {n["secventa"]} paragrafe. Verifică să fie **două** secvențe diferite, '
-                  'nu una singură continuată pe mai multe paragrafe.')
+        cerinta('Secvențe', 'ok', f'{n["secventa"]} paragrafe. Verifică să fie **două** secvențe diferite, '
+                'nu una singură continuată pe mai multe paragrafe.')
     elif n['secventa'] == 1:
-        atentie.append('Secvențe: un singur paragraf. Baremul cere comentarea a **două** secvențe sau scene.')
+        cerinta('Secvențe', 'atentie', 'Un singur paragraf. Baremul cere comentarea a **două** secvențe sau scene.')
     else:
-        lipsa.append('Secvențe: n-am găsit nicio secvență comentată. Baremul cere **două** secvențe sau scene '
-                     'relevante pentru temă (cerința 2, 6 puncte).')
+        cerinta('Secvențe', 'lipsa', 'N-am găsit nicio secvență comentată. Baremul cere **două** secvențe sau '
+                'scene relevante pentru temă (cerința 2, 6 puncte).')
 
     # cerința 3: două elemente de structură / limbaj (6 puncte)
     if n['element_structura'] >= 2:
-        ok.append(f'Elemente de structură: {n["element_structura"]} paragrafe (baremul cere două).')
+        cerinta('Elemente de structură', 'ok', f'{n["element_structura"]} paragrafe (baremul cere două).')
     elif n['element_structura'] == 1:
-        atentie.append('Elemente de structură: unul singur. Baremul cere **două** (de ex. titlul, incipitul, '
-                       'finalul, conflictul, perspectiva narativă, motivele, figurile de stil).')
+        cerinta('Elemente de structură', 'atentie', 'Unul singur. Baremul cere **două** (de ex. titlul, '
+                'incipitul, finalul, conflictul, perspectiva narativă, motivele, figurile de stil).')
     else:
-        lipsa.append('Elemente de structură: n-am găsit niciunul. Baremul cere **două** componente de structură '
-                     'și/sau de limbaj (cerința 3, 6 puncte).')
+        cerinta('Elemente de structură', 'lipsa', 'N-am găsit niciunul. Baremul cere **două** componente de '
+                'structură și/sau de limbaj (cerința 3, 6 puncte).')
 
+    # concluzia
+    if not n['concluzie']:
+        cerinta('Concluzie', 'lipsa', 'Lipsește (contează la redactare, „părțile componente”).')
+    elif etichete[-1] != 'concluzie':
+        cerinta('Concluzie', 'atentie', 'Există, dar nu pare să fie ultimul paragraf.')
+    else:
+        cerinta('Concluzie', 'ok', 'Există.')
+
+    return {
+        'paragrafe': [{'nr': i + 1, 'eticheta': e, 'nume': NUME[e], 'text': p, 'cuvinte': len(p.split())}
+                      for i, (e, p) in enumerate(zip(etichete, paragrafe))],
+        'cerinte': cerinte,
+        'cuvinte': cuvinte,
+        'indeplinite': sum(c['stare'] == 'ok' for c in cerinte),
+        'total': len(cerinte),
+        'metoda': metoda(),
+    }
+
+
+def raport_markdown(cerinte, nota=''):
+    """transformă lista de cerințe în raportul text afișat în Gradio"""
     raport = []
-    if lipsa:
-        raport.append('### Ce lipsește\n' + '\n'.join('- ' + x for x in lipsa))
-    if atentie:
-        raport.append('### De verificat\n' + '\n'.join('- ' + x for x in atentie))
-    if ok:
-        raport.append('### În regulă\n' + '\n'.join('- ' + x for x in ok))
-    raport.append('_' + metoda() + ' Etichetele pot greși: folosește-le ca ajutor, nu ca notă._')
-    return tabel, '\n\n'.join(raport)
+    for stare, titlu in (('lipsa', 'Ce lipsește'), ('atentie', 'De verificat'), ('ok', 'În regulă')):
+        rand = [f'{c["nume"]}: {c["mesaj"]}' for c in cerinte if c['stare'] == stare]
+        if rand:
+            raport.append(f'### {titlu}\n' + '\n'.join('- ' + x for x in rand))
+    if nota:
+        raport.append(nota)
+    return '\n\n'.join(raport)
+
+
+def verifica(eseu):
+    """pentru interfața Gradio: întoarce (tabel cu eticheta fiecărui paragraf, raport text)"""
+    a = analizeaza(eseu)
+    if a is None:
+        return [], 'Lipește un eseu, cu paragrafele despărțite prin rânduri noi.'
+    tabel = [[p['nr'], p['nume'], p['text'][:120] + ('…' if len(p['text']) > 120 else '')] for p in a['paragrafe']]
+    nota = '_' + a['metoda'] + ' Etichetele pot greși: folosește-le ca ajutor, nu ca notă._'
+    return tabel, raport_markdown(a['cerinte'], nota)
 
 
 if __name__ == '__main__':

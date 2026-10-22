@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="ro"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "on-error": "#690005", "surface": "#141125", "on-primary-fixed-variant": "#5a00c6", "surface-tint": "#d2bbff", "surface-variant": "#363248", "primary-container": "#7c3aed", "surface-container-high": "#2b273d", "surface-dim": "#141125", "surface-container-highest": "#363248", "on-surface-variant": "#ccc3d8", "secondary": "#4cd7f6", "secondary-fixed": "#acedff", "on-error-container": "#ffdad6", "on-primary-container": "#ede0ff", "on-tertiary-fixed-variant": "#6900b3", "surface-bright": "#3a364d", "surface-container-low": "#1c192e", "tertiary-fixed": "#f0dbff", "on-secondary": "#003640", "on-secondary-container": "#00424e", "tertiary-container": "#8d36db", "primary": "#d2bbff", "secondary-fixed-dim": "#4cd7f6", "surface-container-lowest": "#0e0b20", "on-secondary-fixed-variant": "#004e5c", "on-primary": "#3f008e", "secondary-container": "#03b5d3", "tertiary-fixed-dim": "#ddb7ff", "outline-variant": "#4a4455", "on-tertiary-container": "#f2dfff", "on-background": "#e6dffc", "error": "#ffb4ab", "on-tertiary-fixed": "#2c0051", "on-tertiary": "#490080", "error-container": "#93000a", "surface-container": "#201d32", "inverse-primary": "#732ee4", "outline": "#958da1", "on-primary-fixed": "#25005a", "primary-fixed-dim": "#d2bbff", "inverse-on-surface": "#312e44", "tertiary": "#ddb7ff", "on-secondary-fixed": "#001f26", "inverse-surface": "#e6dffc", "background": "#141125", "on-surface": "#e6dffc", "primary-fixed": "#eaddff" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "space-md": "1rem", "margin-mobile": "1rem", "gutter": "1.5rem", "space-xs": "0.25rem", "space-xl": "2.5rem", "gutter-mobile": "1rem", "space-sm": "0.5rem", "space-lg": "1.5rem", "margin": "2rem" }, "fontFamily": { "body-lg": ["Inter"], "headline-lg": ["Space Grotesk"], "label-lg": ["Space Grotesk"], "display": ["Space Grotesk"], "headline-sm": ["Space Grotesk"], "label-sm": ["Space Grotesk"], "headline-lg-mobile": ["Space Grotesk"], "body-sm": ["Inter"], "label-md": ["Space Grotesk"], "body-md": ["Inter"], "headline-md": ["Space Grotesk"] }, "fontSize": { "body-lg": ["16px", { "lineHeight": "26px", "fontWeight": "400" }], "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600" }], "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.04em", "fontWeight": "600" }], "display": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.03em", "fontWeight": "700" }], "headline-sm": ["18px", { "lineHeight": "26px", "fontWeight": "500" }], "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.08em", "fontWeight": "500" }], "headline-lg-mobile": ["26px", { "lineHeight": "34px", "letterSpacing": "-0.02em", "fontWeight": "600" }], "body-sm": ["12px", { "lineHeight": "18px", "fontWeight": "400" }], "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.06em", "fontWeight": "500" }], "body-md": ["14px", { "lineHeight": "22px", "fontWeight": "400" }], "headline-md": ["22px", { "lineHeight": "30px", "letterSpacing": "-0.01em", "fontWeight": "600" }] } } } };</script><style>
+@layer base{
+  html,body{width:100vw;margin:0;padding:0;}
+  body{overscroll-behavior:none;transition:background-color 0.4s cubic-bezier(0.4,0,0.2,1),color 0.4s ease;}
+  .pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}
+  .pt-safe{padding-top:env(safe-area-inset-top,0px);}
+  main>:first-child{margin-top:0!important;}
+  main>:last-child{margin-bottom:0!important;}
+}
+::-webkit-scrollbar{display:none;}
+body {
+  min-height: max(884px, 100dvh);
+}
+
+/* Light Mode Overrides for Supernova Pearl Palette */
+html:not(.dark) body {
+  background-color: #f7f5ff !important;
+  color: #1e1b4b !important;
+}
+html:not(.dark) header {
+  background: rgba(247, 245, 255, 0.85) !important;
+  border-bottom: 1px solid rgba(196, 181, 253, 0.4);
+  box-shadow: 0 4px 20px rgba(124, 58, 237, 0.08) !important;
+}
+html:not(.dark) main {
+  background-color: transparent !important;
+}
+html:not(.dark) .bg-surface {
+  background-color: #f7f5ff !important;
+}
+html:not(.dark) .bg-surface-container {
+  background-color: #ede9fe !important;
+  box-shadow: 0 4px 18px rgba(139, 92, 246, 0.1) !important;
+  border: 1px solid rgba(221, 214, 254, 0.8);
+}
+html:not(.dark) .bg-surface-container-low {
+  background-color: #f3f0ff !important;
+  border: 1px solid rgba(221, 214, 254, 0.6);
+}
+html:not(.dark) .bg-surface-container-high {
+  background-color: #ddd6fe !important;
+}
+html:not(.dark) .bg-surface-container-lowest {
+  background-color: #ffffff !important;
+  border: 1px solid rgba(221, 214, 254, 0.8);
+}
+html:not(.dark) .text-on-surface {
+  color: #1e1b4b !important;
+}
+html:not(.dark) .text-on-surface-variant {
+  color: #5b21b6 !important;
+}
+html:not(.dark) .text-outline {
+  color: #7c3aed !important;
+}
+html:not(.dark) nav {
+  background: rgba(247, 245, 255, 0.9) !important;
+  border-top: 1px solid rgba(196, 181, 253, 0.5);
+  box-shadow: 0 -4px 20px rgba(124, 58, 237, 0.08) !important;
+}
+html:not(.dark) #essay-text {
+  color: #1e1b4b !important;
+}
+html:not(.dark) #essay-text::placeholder {
+  color: #8b5cf6 !important;
+}
+
+/* Celestial Switch Glowing Physics */
+.celestial-switch-dark {
+  background: linear-gradient(135deg, #1b153b 0%, #0d0a1e 100%);
+  box-shadow: 0 0 14px rgba(124, 58, 237, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.15);
+}
+.celestial-switch-light {
+  background: linear-gradient(135deg, #fef3c7 0%, #e0e7ff 100%);
+  box-shadow: 0 0 16px rgba(251, 191, 36, 0.6), inset 0 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+/* Shooting Star Particle Keyframes */
+@keyframes shootBurst {
+  0% { transform: scale(0) rotate(0deg); opacity: 1; }
+  100% { transform: scale(1.6) rotate(45deg); opacity: 0; }
+}
+.star-burst-animate {
+  animation: shootBurst 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+</style>
+</head><body class="bg-surface font-body-md text-on-surface flex flex-col min-h-screen relative selection:bg-primary-container selection:text-on-primary-container">
+<!-- Living Celestial Cosmic Canvas Starfield Layer -->
+<canvas class="fixed inset-0 w-full h-full pointer-events-none z-0" id="cosmic-stars"></canvas>
+<!-- Star Burst Particle Container for Mode Toggle Impact -->
+<div class="fixed inset-0 pointer-events-none z-[60] overflow-hidden" id="particle-burst-container"></div>
+<header class="fixed top-0 w-full z-50 pt-safe bg-surface/75 backdrop-blur-xl shadow-[0_4px_24px_rgba(10,7,27,0.6)] transition-all duration-300"><div class="h-16 px-gutter-mobile flex items-center justify-between"><div class="flex items-center gap-space-sm min-w-0"><img alt="BacHelper Cosmic Logo" class="h-8 w-auto object-contain shrink-0" src="https://lh3.googleusercontent.com/aida-public/AB6AXuABTNZBu8DeX7lXYJB5Ezr1tDto35WuE93xw26A1dpehLy6vDUyoTvcz_Q_sHvVT__JdZNfrHPKSb7vhfhxvEN9IvBMj2dHQzpifLdDFePIwXgeZvJ7hZhbGl1foBRCsf7rJb56LfAIG4K5D1sW4iwMtXiHh5oMPVQM2K60JYV4BBZ5gsQ_WjmhdX5YWpGCVvcOGVEmjPOB_-7FLM3TSV-AcKqwMJjUPepjM2_2CzNY-EiBn3WJVEw"/><div class="flex flex-col min-w-0"><span class="text-label-sm font-label-sm uppercase tracking-wider text-secondary leading-none">BacHelper AI</span><h1 class="text-headline-sm font-headline-sm text-on-surface truncate leading-tight">Verifică Eseul</h1></div></div>
+<div class="flex items-center gap-2">
+<!-- Interactive Cosmic Celestial Dark/Light Mode Switch -->
+<button aria-label="Comută între Mod Cosmic și Mod Supernova" class="relative group flex items-center justify-between w-[86px] h-[34px] px-1 rounded-full border border-primary/30 transition-all duration-500 cursor-pointer celestial-switch-dark overflow-hidden active:scale-95" id="theme-toggle-btn" title="Comută între Mod Cosmic și Mod Supernova">
+<!-- Starfield micro dots inside toggle track -->
+<div class="absolute inset-0 pointer-events-none opacity-60">
+<span class="absolute w-1 h-1 rounded-full bg-cyan-300 top-1.5 left-3 animate-ping" style="animation-duration: 2.4s;"></span>
+<span class="absolute w-1 h-1 rounded-full bg-purple-200 top-4 left-6"></span>
+<span class="absolute w-1 h-1 rounded-full bg-amber-200 top-2 right-4"></span>
+<span class="absolute w-0.5 h-0.5 rounded-full bg-white bottom-1.5 right-6"></span>
+</div>
+<!-- Sliding Orb: Crescent Moon / Supernova Sun -->
+<div class="relative z-10 w-6 h-6 rounded-full bg-gradient-to-tr from-primary to-secondary flex items-center justify-center text-on-primary shadow-[0_0_10px_rgba(76,215,246,0.8)] transition-transform duration-500 ease-out translate-x-0" id="celestial-thumb">
+<span class="material-symbols-outlined text-[15px] transition-transform duration-500" id="celestial-icon">dark_mode</span>
+</div>
+<!-- Mode Label Inside Switch -->
+<span class="relative z-10 text-[10px] font-headline-sm uppercase tracking-wider font-semibold text-secondary pr-1.5 select-none transition-colors duration-300" id="celestial-label">Cosmic</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0 shadow-sm"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div>
+</div></div></header><main class="flex-1 flex flex-col relative w-full pt-16 pb-24 bg-surface z-10"><div class="flex flex-col w-full px-margin-mobile gap-space-lg">
+<!-- Cosmic Banner Header Card -->
+<div class="relative overflow-hidden rounded-xl bg-surface-container-low shadow-xl">
+<div class="relative h-44 w-full overflow-hidden bg-cover bg-center" data-alt="Futuristic spaceship observation deck viewport showing a glowing deep purple and turquoise stellar nebula with constellation lines and high-tech holographic HUD telemetry screens, cinematic lighting, deep cosmic cyberpunk atmosphere." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDtFldLViHhgnw5amARXpYBeF28MnNzYIBK-HmUmGUAba2HW1yrdzCviIXGQx8ZnI4jXQ3qAJD8CrHX9tL9JzdV8vhGxlELTywai1kLEBa1JlYg8BzaMBZFG3ljil3fFpS16WPRjI2Tve7btNjLg2YOfdj_cvUmMeWlEt62aNT96ZmkEGlIZKqkrVWwRnVkDhcDJADa0DthlyBQm5lydhCAlKAPbMPlm9uc5krtoKFD0Z5KpgPyMNU')">
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-low via-surface-container-low/60 to-transparent"></div>
+<!-- Top AI Telemetry Badge -->
+<div class="absolute top-3 left-3 flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container-lowest/85 backdrop-blur-md shadow-md">
+<span class="inline-block w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+<span class="text-label-sm font-label-sm text-secondary uppercase tracking-wider">Motor AI Cosmic v4.2 • Barem Oficial</span>
+</div>
+<!-- Quick Status Hologram Icon -->
+<div class="absolute top-3 right-3 w-8 h-8 rounded-full bg-primary-container/40 backdrop-blur-md flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]">rocket_launch</span>
+</div>
+<!-- Banner Body Catchphrase -->
+<div class="absolute bottom-3 left-3 right-3 flex flex-col gap-0.5">
+<span class="text-label-md font-label-md text-primary tracking-wide uppercase">Evaluare Barem Subiectul III</span>
+<p class="text-headline-sm font-headline-sm text-on-surface font-semibold leading-snug">
+          Verifică-ți eseul după barem, în loc să tocești comentarii.
+        </p>
+</div>
+</div>
+</div>
+<!-- Operational Mode / Author Pill Carousel -->
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between px-0.5">
+<span class="text-label-sm font-label-sm uppercase tracking-wider text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-secondary">menu_book</span>
+        Opere canonice frecvente
+      </span>
+<span class="text-label-sm font-label-sm text-secondary cursor-pointer hover:underline">Toate operele</span>
+</div>
+<div class="flex items-center gap-2 overflow-x-auto py-1 no-scrollbar">
+<button class="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary-container text-on-primary-container text-label-sm font-label-sm shadow-[0_0_12px_rgba(124,58,237,0.4)]">
+<span class="material-symbols-outlined text-[14px]">auto_stories</span>
+        Mihai Eminescu - Luceafărul
+      </button>
+<button class="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container-high text-on-surface text-label-sm font-label-sm hover:bg-surface-variant">
+        Ion Creangă - Harap-Alb
+      </button>
+<button class="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container-high text-on-surface text-label-sm font-label-sm hover:bg-surface-variant">
+        Liviu Rebreanu - Ion
+      </button>
+<button class="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container-high text-on-surface text-label-sm font-label-sm hover:bg-surface-variant">
+        Camil Petrescu
+      </button>
+<button class="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container-high text-on-surface text-label-sm font-label-sm hover:bg-surface-variant">
+        G. Călinescu
+      </button>
+</div>
+</div>
+<!-- Essay Input Deck -->
+<div class="flex flex-col gap-2 rounded-xl bg-surface-container p-4 shadow-xl">
+<div class="flex items-center justify-between">
+<div class="flex flex-col">
+<label class="text-label-md font-label-md text-on-surface font-medium flex items-center gap-1.5" for="essay-text">
+<span class="material-symbols-outlined text-[18px] text-primary">edit_note</span>
+          Eseul tău
+        </label>
+<span class="text-body-sm font-body-sm text-on-surface-variant">Lipește eseul (particularitățile unui text), cu fiecare paragraf pe un rând nou.</span>
+</div>
+<button class="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface-container-high hover:bg-surface-variant text-secondary text-label-sm font-label-sm transition-all duration-150 active:scale-95" id="btn-paste">
+<span class="material-symbols-outlined text-[16px]">content_paste</span>
+        Lipește
+      </button>
+</div>
+<!-- Textarea Frame -->
+<div class="relative w-full rounded-lg bg-surface-container-lowest overflow-hidden">
+<textarea class="w-full bg-transparent p-3 text-body-md font-body-md text-on-surface placeholder:text-outline focus:outline-none resize-none leading-relaxed" id="essay-text" placeholder="Poemul romantic „Luceafărul” de Mihai Eminescu a apărut în anul 1883 în Almanahul Societății Academice Social-Literare „România Jună” din Viena...
+
+Viziunea despre lume este reliefată prin interferența genurilor literare (liric, epic, dramatic)...
+
+Două secvențe poetice relevante pentru condiția geniului sunt tabloul inițial și dialogul demiurgic..." rows="7">Poemul romantic „Luceafărul” de Mihai Eminescu a apărut în anul 1883 în Almanahul Societății Academice Social-Literare „România Jună” din Viena și este considerat capodopera liricii eminesciene. Textul aparține romantismului prin tematica geniului neînțeles, îmbinarea speciilor literare și procedee precum antiteza și metamorfoza.
+
+O primă secvență reprezentativă pentru ilustrarea viziunii despre lume este dialogul dintre Hyperion și Demiurg din spațiul celest, unde geniul cere eliberarea de nemurire în schimbul unei ore de iubire pământeană, fiind refuzat categoric datorită legilor cosmice nestrămutate.
+
+În ceea ce privește compoziția operei, se evidențiază simetria celor patru tablouri poetice construite pe axa spațială terestru-cosmic și relația de opoziție ireconciliabilă dintre absolut și contingent, personajele reprezentând măști lirice ale poetului.</textarea>
+<!-- Inset Live Telemetry Strip -->
+<div class="flex items-center justify-between px-3 py-1.5 bg-surface-container-low/90 text-on-surface-variant text-label-sm font-label-sm">
+<div class="flex items-center gap-3">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-secondary">format_align_left</span>
+<span id="line-count">3 paragrafe</span>
+</span>
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-primary">segment</span>
+<span class="text-secondary font-medium" id="word-count">138 cuvinte</span>
+</span>
+</div>
+<div class="flex items-center gap-1 text-label-sm text-outline">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+          Auto-salvare activă
+        </div>
+</div>
+</div>
+<!-- Cosmic Scan Action Button -->
+<button class="w-full mt-1 py-3 px-4 rounded-xl bg-gradient-to-r from-primary-container to-secondary-container text-on-primary font-headline-sm text-headline-sm flex items-center justify-center gap-2 shadow-[0_0_24px_-4px_rgba(124,58,237,0.6),0_0_12px_rgba(76,215,246,0.3)] hover:brightness-110 active:scale-[0.99] transition-all" id="btn-scan">
+<span class="material-symbols-outlined text-[20px] animate-spin" style="animation-duration: 4s;">orbit</span>
+<span>Verifică Eseul</span>
+</button>
+</div>
+<!-- Total Predicted Score Card (Telemetry Gauge) -->
+<div class="relative overflow-hidden rounded-xl bg-surface-container p-4 shadow-lg flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-7 h-7 rounded-lg bg-secondary/15 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[18px]">analytics</span>
+</div>
+<div>
+<h2 class="text-headline-sm font-headline-sm text-on-surface">Punctaj Estimat Subiectul III</h2>
+<p class="text-body-sm font-body-sm text-on-surface-variant">Conform baremului CNPEE (30 puncte posibile)</p>
+</div>
+</div>
+<div class="text-right">
+<span class="text-headline-lg font-headline-lg text-secondary font-bold">28<span class="text-headline-sm font-headline-sm text-on-surface-variant">/30p</span></span>
+</div>
+</div>
+<!-- Glowing Progress Bar Dual Track -->
+<div class="w-full flex flex-col gap-1.5">
+<div class="w-full h-3 rounded-full bg-surface-container-lowest overflow-hidden p-0.5">
+<div class="h-full rounded-full bg-gradient-to-r from-primary via-secondary to-secondary-fixed shadow-[0_0_12px_rgba(76,215,246,0.8)]" style="width: 93%;"></div>
+</div>
+<div class="flex justify-between items-center text-label-sm font-label-sm text-on-surface-variant">
+<span>Conținut (18p/18p)</span>
+<span class="text-secondary">Redactare (10p/12p)</span>
+<span class="text-primary">+30p Oficiu Sub. I &amp; II</span>
+</div>
+</div>
+<!-- Quick Pill Feedback Chips -->
+<div class="grid grid-cols-2 gap-2 pt-1">
+<div class="flex items-center gap-2 p-2 rounded-lg bg-surface-container-low">
+<span class="material-symbols-outlined text-secondary text-[20px]">check_circle</span>
+<div class="flex flex-col min-w-0">
+<span class="text-label-sm font-label-sm text-on-surface">Citate &amp; Repere</span>
+<span class="text-body-sm font-body-sm text-secondary truncate">2 secvențe integrate</span>
+</div>
+</div>
+<div class="flex items-center gap-2 p-2 rounded-lg bg-surface-container-low">
+<span class="material-symbols-outlined text-primary text-[20px]">verified</span>
+<div class="flex flex-col min-w-0">
+<span class="text-label-sm font-label-sm text-on-surface">Terminologie</span>
+<span class="text-body-sm font-body-sm text-primary truncate">Lirism &amp; Romantic</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Real-Time Barem Diagnostic Breakdown -->
+<div class="flex flex-col gap-space-sm">
+<div class="flex items-center justify-between px-0.5">
+<h3 class="text-headline-sm font-headline-sm text-on-surface flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[20px] text-primary">fact_check</span>
+        Analiză Structură pe Paragrafe
+      </h3>
+<span class="text-label-sm font-label-sm px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant">
+        3 Paragrafe detectate
+      </span>
+</div>
+<!-- Diagnostic Cards Stream -->
+<div class="flex flex-col gap-2.5">
+<!-- Paragraf 1 -->
+<div class="flex flex-col gap-2 p-3 rounded-xl bg-surface-container shadow-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-6 h-6 rounded-md bg-secondary/20 text-secondary text-label-sm font-label-sm flex items-center justify-center font-bold">#1</span>
+<span class="text-label-md font-label-md text-on-surface font-medium">Încadrare Curent &amp; Particularități</span>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-secondary/15 text-secondary text-label-sm font-label-sm font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">check</span>
+            6 / 6p • Validat
+          </span>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant bg-surface-container-lowest/60 p-2.5 rounded-lg line-clamp-2">
+          „Poemul romantic „Luceafărul” de Mihai Eminescu a apărut în anul 1883 în Almanahul Societății Academice Social-Literare „România Jună”...”
+        </p>
+<div class="flex items-center justify-between text-label-sm font-label-sm text-on-surface-variant pt-0.5">
+<span class="flex items-center gap-1 text-secondary">
+<span class="material-symbols-outlined text-[14px]">psychology</span>
+            Curent literar specificat clar (Romantism)
+          </span>
+<span class="text-outline">48 cuvinte</span>
+</div>
+</div>
+<!-- Paragraf 2 -->
+<div class="flex flex-col gap-2 p-3 rounded-xl bg-surface-container shadow-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-6 h-6 rounded-md bg-primary-container/30 text-primary text-label-sm font-label-sm flex items-center justify-center font-bold">#2</span>
+<span class="text-label-md font-label-md text-on-surface font-medium">Tema și Secvențele Semnificative</span>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-primary-container/20 text-primary text-label-sm font-label-sm font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">tune</span>
+            5 / 6p • Dezvoltă secv. 2
+          </span>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant bg-surface-container-lowest/60 p-2.5 rounded-lg line-clamp-2">
+          „O primă secvență reprezentativă pentru ilustrarea viziunii despre lume este dialogul dintre Hyperion și Demiurg din spațiul celest...”
+        </p>
+<div class="flex items-center justify-between text-label-sm font-label-sm text-on-surface-variant pt-0.5">
+<span class="flex items-center gap-1 text-primary">
+<span class="material-symbols-outlined text-[14px]">info</span>
+            Secvența I validată; adaugă explicit tabloul IV (terestru)
+          </span>
+<span class="text-outline">46 cuvinte</span>
+</div>
+</div>
+<!-- Paragraf 3 -->
+<div class="flex flex-col gap-2 p-3 rounded-xl bg-surface-container shadow-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-6 h-6 rounded-md bg-secondary/20 text-secondary text-label-sm font-label-sm flex items-center justify-center font-bold">#3</span>
+<span class="text-label-md font-label-md text-on-surface font-medium">Elemente de Structură &amp; Compoziție</span>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-secondary/15 text-secondary text-label-sm font-label-sm font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">check</span>
+            6 / 6p • Validat
+          </span>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant bg-surface-container-lowest/60 p-2.5 rounded-lg line-clamp-2">
+          „În ceea ce privește compoziția operei, se evidențiază simetria celor patru tablouri poetice construite pe axa spațială terestru-cosmic...”
+        </p>
+<div class="flex items-center justify-between text-label-sm font-label-sm text-on-surface-variant pt-0.5">
+<span class="flex items-center gap-1 text-secondary">
+<span class="material-symbols-outlined text-[14px]">done_all</span>
+            2 elemente identificate (simetrie tablouri, măști lirice)
+          </span>
+<span class="text-outline">44 cuvinte</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Cosmic Tip of the Day -->
+<div class="p-3.5 rounded-xl bg-surface-container-low flex items-start gap-3 shadow-sm mb-2">
+<div class="w-8 h-8 rounded-full bg-secondary/20 text-secondary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[20px]">lightbulb</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="text-label-md font-label-md text-on-surface font-semibold">Sfat Barem Oficial Bac</span>
+<p class="text-body-sm font-body-sm text-on-surface-variant leading-relaxed">
+        Pentru a primi punctajul maxim la redactare (12p), eseul trebuie să aibă minimum 400 de cuvinte și să respecte ortografia, punctuația și așezarea în pagină cu alineate clare.
+      </p>
+</div>
+</div>
+</div>
+<script>
+  (function() {
+    const textarea = document.getElementById('essay-text');
+    const wordCountBadge = document.getElementById('word-count');
+    const lineCountBadge = document.getElementById('line-count');
+    const pasteBtn = document.getElementById('btn-paste');
+    const scanBtn = document.getElementById('btn-scan');
+
+    function updateCounts() {
+      if (!textarea) return;
+      const text = textarea.value.trim();
+      const words = text ? text.split(/\s+/).filter(Boolean).length : 0;
+      const paragraphs = text ? text.split(/\n+/).filter(p => p.trim().length > 0).length : 0;
+      
+      if (wordCountBadge) {
+        wordCountBadge.textContent = words + ' cuvinte';
+      }
+      if (lineCountBadge) {
+        lineCountBadge.textContent = paragraphs + (paragraphs === 1 ? ' paragraf' : ' paragrafe');
+      }
+    }
+
+    if (textarea) {
+      textarea.addEventListener('input', updateCounts);
+      updateCounts();
+    }
+
+    if (pasteBtn && textarea) {
+      pasteBtn.addEventListener('click', async () => {
+        try {
+          if (navigator.clipboard && navigator.clipboard.readText) {
+            const clipText = await navigator.clipboard.readText();
+            if (clipText) {
+              textarea.value = clipText;
+              updateCounts();
+            }
+          } else {
+            textarea.focus();
+          }
+        } catch (e) {
+          textarea.focus();
+        }
+      });
+    }
+
+    if (scanBtn) {
+      scanBtn.addEventListener('click', () => {
+        scanBtn.classList.add('opacity-90', 'scale-[0.98]');
+        setTimeout(() => {
+          scanBtn.classList.remove('opacity-90', 'scale-[0.98]');
+        }, 300);
+      });
+    }
+
+    // ==========================================
+    // COSMIC CANVAS STARFIELD ENGINE
+    // ==========================================
+    const canvas = document.getElementById('cosmic-stars');
+    const ctx = canvas ? canvas.getContext('2d') : null;
+    let width = 0, height = 0;
+    let stars = [];
+    const STAR_COUNT = 65;
+
+    function resizeCanvas() {
+      if (!canvas) return;
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+      initStars();
+    }
+
+    function initStars() {
+      stars = [];
+      for (let i = 0; i < STAR_COUNT; i++) {
+        stars.push({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          size: Math.random() * 1.8 + 0.6,
+          speed: Math.random() * 0.25 + 0.05,
+          twinkleSpeed: Math.random() * 0.03 + 0.01,
+          alpha: Math.random(),
+          increasing: Math.random() > 0.5,
+          type: Math.random() > 0.65 ? 'cyan' : (Math.random() > 0.5 ? 'purple' : 'gold')
+        });
+      }
+    }
+
+    function renderStarfield() {
+      if (!ctx) return;
+      ctx.clearRect(0, 0, width, height);
+
+      const isDark = document.documentElement.classList.contains('dark');
+
+      for (let i = 0; i < stars.length; i++) {
+        const s = stars[i];
+
+        // Twinkle update
+        if (s.increasing) {
+          s.alpha += s.twinkleSpeed;
+          if (s.alpha >= 1) { s.alpha = 1; s.increasing = false; }
+        } else {
+          s.alpha -= s.twinkleSpeed;
+          if (s.alpha <= 0.15) { s.alpha = 0.15; s.increasing = true; }
+        }
+
+        // Float up slowly
+        s.y -= s.speed;
+        if (s.y < 0) {
+          s.y = height;
+          s.x = Math.random() * width;
+        }
+
+        // Draw star with soft cosmic aura
+        ctx.beginPath();
+        let colorStr;
+        if (isDark) {
+          if (s.type === 'cyan') colorStr = `rgba(76, 215, 246, ${s.alpha * 0.8})`;
+          else if (s.type === 'purple') colorStr = `rgba(210, 187, 255, ${s.alpha * 0.9})`;
+          else colorStr = `rgba(255, 255, 255, ${s.alpha * 0.85})`;
+        } else {
+          // Supernova Mode (gold and soft lilac stardust)
+          if (s.type === 'gold') colorStr = `rgba(217, 119, 6, ${s.alpha * 0.55})`;
+          else if (s.type === 'cyan') colorStr = `rgba(14, 165, 233, ${s.alpha * 0.45})`;
+          else colorStr = `rgba(139, 92, 246, ${s.alpha * 0.6})`;
+        }
+
+        ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+        ctx.fillStyle = colorStr;
+        ctx.shadowBlur = isDark ? 6 : 4;
+        ctx.shadowColor = isDark ? '#4cd7f6' : '#f59e0b';
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      }
+
+      requestAnimationFrame(renderStarfield);
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+    requestAnimationFrame(renderStarfield);
+
+    // ==========================================
+    // CELESTIAL DARK/LIGHT MODE TOGGLE MECHANISM
+    // ==========================================
+    const themeToggleBtn = document.getElementById('theme-toggle-btn');
+    const thumb = document.getElementById('celestial-thumb');
+    const icon = document.getElementById('celestial-icon');
+    const label = document.getElementById('celestial-label');
+    const burstContainer = document.getElementById('particle-burst-container');
+
+    function spawnCosmicBurst(originX, originY, isSupernova) {
+      if (!burstContainer) return;
+      const particleCount = 20;
+      const colors = isSupernova 
+        ? ['#f59e0b', '#fbbf24', '#7c3aed', '#ec4899', '#ffffff'] 
+        : ['#4cd7f6', '#d2bbff', '#7c3aed', '#38bdf8', '#ffffff'];
+
+      for (let i = 0; i < particleCount; i++) {
+        const p = document.createElement('div');
+        const size = Math.floor(Math.random() * 8 + 4);
+        const angle = Math.random() * Math.PI * 2;
+        const velocity = Math.random() * 110 + 40;
+        const destX = Math.cos(angle) * velocity;
+        const destY = Math.sin(angle) * velocity;
+        const color = colors[Math.floor(Math.random() * colors.length)];
+
+        p.style.cssText = `
+          position: absolute;
+          left: ${originX}px;
+          top: ${originY}px;
+          width: ${size}px;
+          height: ${size}px;
+          background: ${color};
+          border-radius: 50%;
+          pointer-events: none;
+          box-shadow: 0 0 10px ${color};
+          transition: transform 0.65s cubic-bezier(0.1, 0.9, 0.2, 1), opacity 0.65s ease-out;
+          transform: translate(-50%, -50%) scale(1);
+          opacity: 1;
+        `;
+        burstContainer.appendChild(p);
+
+        requestAnimationFrame(() => {
+          p.style.transform = `translate(calc(-50% + ${destX}px), calc(-50% + ${destY}px)) scale(0.2)`;
+          p.style.opacity = '0';
+        });
+
+        setTimeout(() => {
+          p.remove();
+        }, 700);
+      }
+    }
+
+    if (themeToggleBtn) {
+      themeToggleBtn.addEventListener('click', (e) => {
+        const isDark = document.documentElement.classList.contains('dark');
+        const rect = themeToggleBtn.getBoundingClientRect();
+        const burstX = rect.left + rect.width / 2;
+        const burstY = rect.top + rect.height / 2;
+
+        if (isDark) {
+          // Switch to Supernova Light Mode
+          document.documentElement.classList.remove('dark');
+          themeToggleBtn.classList.remove('celestial-switch-dark');
+          themeToggleBtn.classList.add('celestial-switch-light');
+          
+          thumb.style.transform = 'translateX(50px)';
+          thumb.className = 'relative z-10 w-6 h-6 rounded-full bg-gradient-to-tr from-amber-400 to-yellow-200 flex items-center justify-center text-amber-950 shadow-[0_0_12px_rgba(245,158,11,0.9)] transition-transform duration-500 ease-out translate-x-[50px]';
+          icon.textContent = 'wb_sunny';
+          icon.style.transform = 'rotate(180deg)';
+          
+          label.textContent = 'Solar';
+          label.className = 'relative z-10 text-[10px] font-headline-sm uppercase tracking-wider font-semibold text-amber-900 pl-1.5 pr-0 select-none transition-colors duration-300';
+          themeToggleBtn.style.flexDirection = 'row-reverse';
+          
+          spawnCosmicBurst(burstX, burstY, true);
+        } else {
+          // Switch back to Cosmic Dark Mode
+          document.documentElement.classList.add('dark');
+          themeToggleBtn.classList.remove('celestial-switch-light');
+          themeToggleBtn.classList.add('celestial-switch-dark');
+          
+          thumb.style.transform = 'translateX(0px)';
+          thumb.className = 'relative z-10 w-6 h-6 rounded-full bg-gradient-to-tr from-primary to-secondary flex items-center justify-center text-on-primary shadow-[0_0_10px_rgba(76,215,246,0.8)] transition-transform duration-500 ease-out translate-x-0';
+          icon.textContent = 'dark_mode';
+          icon.style.transform = 'rotate(0deg)';
+          
+          label.textContent = 'Cosmic';
+          label.className = 'relative z-10 text-[10px] font-headline-sm uppercase tracking-wider font-semibold text-secondary pr-1.5 pl-0 select-none transition-colors duration-300';
+          themeToggleBtn.style.flexDirection = 'row';
+          
+          spawnCosmicBurst(burstX, burstY, false);
+        }
+      });
+    }
+  })();
+</script></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/85 backdrop-blur-xl shadow-[0_-4px_24px_rgba(14,9,39,0.8)] transition-all duration-300" data-active-classes="text-secondary bg-primary-container/20 shadow-[0_0_16px_rgba(6,182,212,0.35)]"><div class="flex items-center justify-around h-20 px-space-xs"><a class="flex flex-col items-center justify-center gap-1 w-24 h-14 rounded-xl text-on-surface-variant hover:text-on-surface transition-all duration-200 active:scale-95" data-path="verifica-eseul" href="#"><span class="material-symbols-outlined text-[22px]">rate_review</span><span class="text-label-sm font-label-sm tracking-wide text-center truncate max-w-[84px]">Verifică</span></a><a class="flex flex-col items-center justify-center gap-1 w-24 h-14 rounded-xl text-on-surface-variant hover:text-on-surface transition-all duration-200 active:scale-95" data-path="text-argumentativ" href="#"><span class="material-symbols-outlined text-[22px]">balance</span><span class="text-label-sm font-label-sm tracking-wide text-center truncate max-w-[84px]">Argumentativ</span></a><a class="flex flex-col items-center justify-center gap-1 w-24 h-14 rounded-xl text-on-surface-variant hover:text-on-surface transition-all duration-200 active:scale-95" data-path="genereaza-text" href="#"><span class="material-symbols-outlined text-[22px]">auto_awesome</span><span class="text-label-sm font-label-sm tracking-wide text-center truncate max-w-[84px]">Generează</span></a></div></nav></body></html>

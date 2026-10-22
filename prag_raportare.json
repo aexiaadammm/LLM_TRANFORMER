@@ -1,0 +1,7 @@
+{
+  "model": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+  "prag": 0.66,
+  "acc_model": 1.0,
+  "acc_regula": 0.3333333333333333,
+  "nr_test": 12
+}

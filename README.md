@@ -63,8 +63,22 @@ depășește regulile, aplicația trece singură pe el. Cu 24 de paragrafe în p
 pip install -r requirements.txt
 python train.py               # generatorul (descarcă singur textul de antrenare)
 python train_clasificator.py  # clasificatorul (are nevoie de date/paragrafe_etichetate.csv)
-python app.py                 # interfața: http://127.0.0.1:7860
+python server.py              # aplicația web: http://127.0.0.1:8000
 ```
+
+Interfața veche, cu Gradio, merge în continuare cu `python app.py` (http://127.0.0.1:7860).
+
+## Aplicația web
+
+`server.py` (FastAPI) servește pagina din `frontend/index.html` și trei rute JSON:
+
+| Rută | Ce primește | Ce face |
+|---|---|---|
+| `POST /api/eseu` | `{text}` | etichetează paragrafele și verifică cerințele Subiectului al III-lea |
+| `POST /api/argumentativ` | `{text, fragment}` | verifică textul argumentativ (Subiectul I B) |
+| `POST /api/genereaza` | `{start, lungime, temperatura, top_k}` | continuă textul cu GPT-ul antrenat |
+
+Designul (tema „Cosmic Lumina”, întunecat/luminos) a fost schițat în Google Stitch și scris apoi cu Tailwind.
 
 Verificarea textului argumentativ și a eseului funcționează și fără `clasificator.pt`, cu regulile pe cuvinte-cheie.
 

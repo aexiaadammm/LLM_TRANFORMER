@@ -14,6 +14,7 @@ __pycache__/
 date/*
 !date/ghid_etichetare.md
 !date/exemplu_argumentative.csv
+!date/ghid_raportare.md
 
 # texte de antrenare și fișiere de test locale
 input.txt

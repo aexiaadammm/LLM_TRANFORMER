@@ -8,57 +8,64 @@ CONECTORI = ['in primul rand', 'in al doilea rand', 'de asemenea', 'in plus', 'm
              'deoarece', 'pentru ca', 'prin urmare', 'asadar', 'in concluzie', 'de exemplu',
              'totusi', 'pe de o parte', 'pe de alta parte', 'un prim exemplu', 'un al doilea exemplu']
 
+NUME_ARG = {
+    'introducere': 'Introducere',
+    'opinie': 'Opinie',
+    'argument': 'Argument',
+    'concluzie': 'Concluzie',
+    'altele': 'Altceva',
+}
 
-def verifica_argumentativ(text, fragment=''):
+
+def analizeaza_argumentativ(text, fragment=''):
+    """analiza textului argumentativ ca date (folosită de Gradio și de server.py)"""
     paragrafe = imparte_in_paragrafe(text or '')
     if not paragrafe:
-        return [], 'Lipește textul argumentativ.'
+        return None
 
     total = len(paragrafe)
     etichete = [cuvinte_cheie_arg(p, i + 1, total) for i, p in enumerate(paragrafe)]
-    tabel = [[i + 1, e, p[:100]] for i, (e, p) in enumerate(zip(etichete, paragrafe))]
+    cerinte = []   # fiecare: nume, stare ('ok' / 'atentie' / 'lipsa'), mesaj
 
-    lipsa, ok = [], []
+    def cerinta(nume, stare, mesaj):
+        cerinte.append({'nume': nume, 'stare': stare, 'mesaj': mesaj})
 
-    # nr de cuvinte (exemplu completat)
+    # nr de cuvinte
     cuvinte = sum(len(p.split()) for p in paragrafe)
     if cuvinte >= 150:
-        ok.append(f'Lungimea: {cuvinte} de cuvinte (minimum 150).')
+        cerinta('Lungime', 'ok', f'{cuvinte} de cuvinte (minimum 150).')
     else:
-        lipsa.append(f'Textul are doar {cuvinte} de cuvinte; baremul cere minimum 150.')
+        cerinta('Lungime', 'lipsa', f'Textul are doar {cuvinte} de cuvinte; baremul cere minimum 150.')
 
-    # TODO 7: opinia
+    # opinia
     if 'opinie' in etichete:
-        ok.append('Opinia: există.')
+        cerinta('Opinie', 'ok', 'Există.')
     else:
-        lipsa.append('Nu am găsit opinia. Formulează clar ce crezi („Consider că…”).')
+        cerinta('Opinie', 'lipsa', 'Nu am găsit opinia. Formulează clar ce crezi („Consider că…”).')
 
-    # TODO 8: argumentele
-
+    # argumentele
     nr_arg = etichete.count('argument')
     if nr_arg >= 2:
-        ok.append(f'Argumente: {nr_arg} (baremul cere două).')
+        cerinta('Argumente', 'ok', f'{nr_arg} (baremul cere două).')
     else:
-        lipsa.append(f'Am găsit doar {nr_arg} argument(e); baremul cere două, fiecare dezvoltat.')
+        cerinta('Argumente', 'lipsa', f'Am găsit doar {nr_arg} argument(e); baremul cere două, fiecare dezvoltat.')
 
-    # TODO 9: concluzia
-
+    # concluzia
     if 'concluzie' in etichete:
-        ok.append('Concluzia: există.')
+        cerinta('Concluzie', 'ok', 'Există.')
     else:
-        lipsa.append('Lipsește concluzia.')
+        cerinta('Concluzie', 'lipsa', 'Lipsește concluzia.')
 
-    #TODO 10 conectorii
+    # conectorii
     tot_textul = pregateste(' '.join(paragrafe))
     gasiti = [c for c in CONECTORI if c in tot_textul]
     if len(gasiti) >= 3:
-        ok.append(f'Conectori: {len(gasiti)} ({", ".join(gasiti)}).')
+        cerinta('Conectori', 'ok', f'{len(gasiti)} ({", ".join(gasiti)}).')
     else:
-        lipsa.append(f'Folosești puțini conectori ({len(gasiti)}). Leagă argumentele cu „în primul rând”, '
-                     '„de asemenea”, „prin urmare”.')
+        cerinta('Conectori', 'lipsa', f'Folosești puțini conectori ({len(gasiti)}). Leagă argumentele cu '
+                '„în primul rând”, „de asemenea”, „prin urmare”.')
 
-
-    # TODO 11: raportarea la textul suport // pune cu copy paste textul
+    # raportarea la textul suport (doar dacă elevul a lipit fragmentul)
     if fragment:
         frag = pregateste(fragment)
         cuv_fragment = set(re.findall(r'\w{5,}', frag))     # cuvintele de minimum 5 litere din fragment
@@ -74,10 +81,30 @@ def verifica_argumentativ(text, fragment=''):
                 arg_legate += 1
 
         if arg_legate >= 1:
-            ok.append(f'Raportarea la text: {arg_legate} argument(e) par să folosească fragmentul dat.')
+            cerinta('Raportarea la text', 'ok', f'{arg_legate} argument(e) par să folosească fragmentul dat.')
         else:
-            lipsa.append('Argumentele nu par să se raporteze la fragmentul dat. Folosește idei sau '
-                         'exemple din text în dezvoltarea argumentelor (3 puncte în barem).')
+            cerinta('Raportarea la text', 'lipsa', 'Argumentele nu par să se raporteze la fragmentul dat. '
+                    'Folosește idei sau exemple din text în dezvoltarea argumentelor (3 puncte în barem).')
+
+    return {
+        'paragrafe': [{'nr': i + 1, 'eticheta': e, 'nume': NUME_ARG.get(e, e), 'text': p, 'cuvinte': len(p.split())}
+                      for i, (e, p) in enumerate(zip(etichete, paragrafe))],
+        'cerinte': cerinte,
+        'cuvinte': cuvinte,
+        'indeplinite': sum(c['stare'] == 'ok' for c in cerinte),
+        'total': len(cerinte),
+        'metoda': 'Analiză pe reguli: cuvinte-cheie, conectori și cuvinte comune cu textul suport.',
+    }
+
+
+def verifica_argumentativ(text, fragment=''):
+    """pentru interfața Gradio: întoarce (tabel, raport text)"""
+    a = analizeaza_argumentativ(text, fragment)
+    if a is None:
+        return [], 'Lipește textul argumentativ.'
+    tabel = [[p['nr'], p['eticheta'], p['text'][:100]] for p in a['paragrafe']]
+    lipsa = [f'{c["nume"]}: {c["mesaj"]}' for c in a['cerinte'] if c['stare'] != 'ok']
+    ok = [f'{c["nume"]}: {c["mesaj"]}' for c in a['cerinte'] if c['stare'] == 'ok']
     raport = ''
     if lipsa:
         raport += '### Ce lipsește\n' + '\n'.join('- ' + x for x in lipsa) + '\n\n'
